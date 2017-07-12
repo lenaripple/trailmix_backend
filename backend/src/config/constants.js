@@ -1,5 +1,6 @@
 const devConfig = {
-  MONGO_URL: 'mongodb://localhost/trailmix_final-dev'
+  MONGO_URL: 'mongodb://localhost/trailmix_final-dev',
+  JWT_SECRET: 'thsisasecret'
 };
 const testConfig = {
   MONGO_URL: 'mongodb://localhost/trailmix_final-test'
