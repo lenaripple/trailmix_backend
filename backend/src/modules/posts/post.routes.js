@@ -10,4 +10,6 @@ routes.post('/', authJwt, validate(postValidation.createPost), postController.cr
 
 routes.get('/:id', postController.getPostById)
 
+routes.get('/', postController.getPostsList);
+
 export default routes;

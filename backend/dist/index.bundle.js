@@ -676,6 +676,8 @@ routes.post('/', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.
 
 routes.get('/:id', postController.getPostById);
 
+routes.get('/', postController.getPostsList);
+
 exports.default = routes;
 
 /***/ }),
@@ -690,6 +692,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createPost = createPost;
 exports.getPostById = getPostById;
+exports.getPostsList = getPostsList;
 
 var _post = __webpack_require__(27);
 
@@ -713,6 +716,15 @@ async function getPostById(req, res) {
     return res.status(500).json(error);
   }
 };
+
+async function getPostsList(req, res) {
+  try {
+    const posts = await _post2.default.list();
+    return res.status(201).json(posts);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
 
 /***/ }),
 /* 27 */
@@ -806,6 +818,9 @@ PostSchema.methods = {
 PostSchema.statics = {
   createPost(args, user) {
     return this.create(Object.assign({}, args, { user }));
+  },
+  list({ skip = 0 } = {}) {
+    return this.find().sort({ createdAt: -1 }).skip(skip).populate('user');
   }
 };
 

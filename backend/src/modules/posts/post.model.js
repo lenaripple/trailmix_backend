@@ -69,7 +69,13 @@ PostSchema.methods = {
 PostSchema.statics = {
   createPost(args, user){
     return this.create({...args, user});
-  }
+  },
+  list({ skip= 0} = {}){
+    return this.find()
+      .sort({ createdAt: -1})
+      .skip(skip)
+      .populate('user');
+  },
 };
 
 export default mongoose.model('Post', PostSchema)

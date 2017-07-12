@@ -16,3 +16,12 @@ export async function getPostById(req, res){
     return res.status(500).json(error);
   }
 };
+
+export async function getPostsList(req, res){
+  try {
+    const posts = await Post.list();
+    return res.status(201).json(posts);
+  } catch (error){
+    return res.status(500).json(error);
+  }
+}
