@@ -8,3 +8,11 @@ export async function createPost(req, res){
     return res.status(400).json(error);
   }
 };
+export async function getPostById(req, res){
+  try {
+    const post = await Post.findById(req.params.id).populate('user');
+    return res.status(201).json(post);
+  } catch (error){
+    return res.status(500).json(error);
+  }
+};
