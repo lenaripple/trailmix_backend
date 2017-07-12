@@ -4,6 +4,8 @@ import { hashSync, compareSync } from 'bcrypt-nodejs';
 import jwt from 'jsonwebtoken';
 import { passwordReg } from './user.validation';
 import constants from '../../config/constants';
+import uniqueValidator from 'mongoose-unique-validator';
+
 
 const UserSchema = new Schema(
   {
@@ -53,6 +55,10 @@ UserSchema.pre('save', function(next){
     this.password = this._hashPassword(this.password);
   }
   return next();
+});
+
+UserSchema.plugin(uniqueValidator, {
+  message: `{VALUE} already taken.`
 });
 
 UserSchema.methods = {
