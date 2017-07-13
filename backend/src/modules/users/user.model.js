@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { passwordReg } from './user.validation';
 import constants from '../../config/constants';
 import uniqueValidator from 'mongoose-unique-validator';
-
+import Post from '../posts/post.model'
 
 const UserSchema = new Schema(
   {
@@ -47,7 +47,13 @@ const UserSchema = new Schema(
       },
       message: '{VALUE} is not a valid password'
     }
-  }
+  },
+  savedTrips: {
+    posts: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Post'
+    }],
+  },
 });
 
 UserSchema.pre('save', function(next){
@@ -89,6 +95,18 @@ UserSchema.methods = {
       username: this.username,
     };
   },
+  _savedTrips: {
+    async posts(postId){
+      if (this.savedTrips.posts.indexOf(postId)>= 0){
+        this.savedTrips.posts.remove(postId)
+        await Post.decMembersCount(postId)
+      } else {
+        this.savedTrips.posts.push(postId)
+        await Post.incMembersCount(postId)
+      }
+      return this.save();
+    }
+  }
 };
 
 export default mongoose.model('User', UserSchema);

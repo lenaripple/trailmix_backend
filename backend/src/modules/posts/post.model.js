@@ -40,6 +40,10 @@ const PostSchema = new Schema({
   rating: {
     type: Number
   },
+  membersCount: {
+    type: Number,
+    default: 0,
+  },
 }, {timestamps: true});
 
 PostSchema.plugin(uniqueValidator, {
@@ -80,6 +84,12 @@ PostSchema.statics = {
       .skip(skip)
       .populate('user');
   },
+  incMembersCount(postId){
+    return this.findByIdAndUpdate(postId, { $inc:{ membersCount: 1 }});
+  },
+  decMembersCount(postId){
+    return this.findByIdAndUpdate(postId, { $inc:{ membersCount: -1 }});
+  }
 };
 
 export default mongoose.model('Post', PostSchema)

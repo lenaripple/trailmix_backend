@@ -1,4 +1,5 @@
 import Post from './post.model';
+import User from '../users/user.model';
 
 export async function createPost(req, res){
   try {
@@ -25,6 +26,7 @@ export async function getPostsList(req, res){
     return res.status(500).json(error);
   }
 };
+
 export async function updatePost(req, res){
   try {
     const post = await Post.findById(req.params.id);
@@ -49,6 +51,16 @@ export async function deletePost(req, res){
     await post.remove();
     return res.sendStatus(200);
   } catch(error){
+    return res.status(500).json(error);
+  }
+};
+
+export async function saveTrip(req,res){
+  try {
+    const user = await User.findById(req.user._id);
+    await user._savedTrips.posts(req.params.id);
+    return res.sendStatus(200);
+  } catch (error){
     return res.status(500).json(error);
   }
 };
