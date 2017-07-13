@@ -28,7 +28,18 @@ export async function getPostById(req, res){
 
 export async function getPostsList(req, res){
   try {
-    const posts = await Post.list();
+    const promise = await Promise.all([
+      User.findById(req.user._id),
+      Post.list()
+    ]);
+    const posts = promise[1].reduce((arr, post) => {
+      const saved = promise[0]._savedTrips.isSaved(post._id);
+      arr.push({
+        ...post.toJSON(),
+        saved
+      });
+      return arr;
+    }, []);
     return res.status(201).json(posts);
   } catch (error){
     return res.status(500).json(error);
