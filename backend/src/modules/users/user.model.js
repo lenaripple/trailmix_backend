@@ -95,6 +95,7 @@ UserSchema.methods = {
       username: this.username,
     };
   },
+
   _savedTrips: {
     async posts(postId){
       if (this.savedTrips.posts.indexOf(postId)>= 0){
@@ -105,6 +106,12 @@ UserSchema.methods = {
         await Post.incMembersCount(postId)
       }
       return this.save();
+    },
+    isSaved(postId){
+      if (this.savedTrips.posts.indexOf(postId)>= 0){
+        return true;
+      }
+      return false;
     }
   }
 };

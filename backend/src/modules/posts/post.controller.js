@@ -11,8 +11,16 @@ export async function createPost(req, res){
 };
 export async function getPostById(req, res){
   try {
-    const post = await Post.findById(req.params.id).populate('user');
-    return res.status(201).json(post);
+    const promise = await Promise.all([
+      User.findById(req.user._id),
+      Post.findById(req.params.id).populate('user')
+    ]);
+    const saved = promise[0]._savedTrips.isSaved(req.params.id);
+    const post = promise[1];
+    return res.status(201).json({
+    ...post.toJSON(),
+    saved
+  });
   } catch (error){
     return res.status(500).json(error);
   }

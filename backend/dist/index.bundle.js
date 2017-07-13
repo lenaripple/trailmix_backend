@@ -238,6 +238,7 @@ UserSchema.methods = {
       username: this.username
     };
   },
+
   _savedTrips: {
     async posts(postId) {
       if (this.savedTrips.posts.indexOf(postId) >= 0) {
@@ -248,6 +249,12 @@ UserSchema.methods = {
         await _post2.default.incMembersCount(postId);
       }
       return this.save();
+    },
+    isSaved(postId) {
+      if (this.savedTrips.posts.indexOf(postId) >= 0) {
+        return true;
+      }
+      return false;
     }
   }
 };
@@ -865,8 +872,12 @@ async function createPost(req, res) {
 };
 async function getPostById(req, res) {
   try {
-    const post = await _post2.default.findById(req.params.id).populate('user');
-    return res.status(201).json(post);
+    const promise = await Promise.all([_user2.default.findById(req.user._id), _post2.default.findById(req.params.id).populate('user')]);
+    const saved = promise[0]._savedTrips.isSaved(req.params.id);
+    const post = promise[1];
+    return res.status(201).json(Object.assign({}, post.toJSON(), {
+      saved
+    }));
   } catch (error) {
     return res.status(500).json(error);
   }
