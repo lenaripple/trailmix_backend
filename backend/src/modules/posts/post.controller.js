@@ -24,4 +24,18 @@ export async function getPostsList(req, res){
   } catch (error){
     return res.status(500).json(error);
   }
-}
+};
+export async function updatePost(req, res){
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post.user.equals(req.user._id)){
+      return res.sendStatus(403);
+    }
+    Object.keys(req.body).forEach(key => {
+      post[key] = req.body[key];
+    })
+    return res.status(200).json(await post.save());
+  } catch (error){
+    return res.status(500).json(error);
+  }
+};

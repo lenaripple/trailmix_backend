@@ -10,4 +10,13 @@ export default {
       extra: Joi.string(),
     },
   },
+  updatePost: {
+    body:{
+      title: Joi.string().min(3),
+      date: Joi.date(),
+      location: Joi.string(),
+      description: Joi.string(),
+      extra: Joi.string(),
+    },
+  },
 };

@@ -678,6 +678,8 @@ routes.get('/:id', postController.getPostById);
 
 routes.get('/', postController.getPostsList);
 
+routes.patch('/:id', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.updatePost), postController.updatePost);
+
 exports.default = routes;
 
 /***/ }),
@@ -693,6 +695,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.createPost = createPost;
 exports.getPostById = getPostById;
 exports.getPostsList = getPostsList;
+exports.updatePost = updatePost;
 
 var _post = __webpack_require__(27);
 
@@ -724,7 +727,21 @@ async function getPostsList(req, res) {
   } catch (error) {
     return res.status(500).json(error);
   }
-}
+};
+async function updatePost(req, res) {
+  try {
+    const post = await _post2.default.findById(req.params.id);
+    if (!post.user.equals(req.user._id)) {
+      return res.sendStatus(403);
+    }
+    Object.keys(req.body).forEach(key => {
+      post[key] = req.body[key];
+    });
+    return res.status(200).json((await post.save()));
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
 
 /***/ }),
 /* 27 */
@@ -856,6 +873,15 @@ exports.default = {
       date: _joi2.default.date().required(),
       location: _joi2.default.string(),
       description: _joi2.default.string().required(),
+      extra: _joi2.default.string()
+    }
+  },
+  updatePost: {
+    body: {
+      title: _joi2.default.string().min(3),
+      date: _joi2.default.date(),
+      location: _joi2.default.string(),
+      description: _joi2.default.string(),
       extra: _joi2.default.string()
     }
   }
