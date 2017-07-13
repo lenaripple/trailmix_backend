@@ -9,13 +9,10 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev:build": "yarn run clean && webpack -w",
-    "dev": "NODE_ENV=production nodemon dist/index.bundle.js",
-    "start": "node ./backend/dist/index.bundle.js"
+    "dev": "NODE_ENV=development nodemon dist/index.bundle.js",
+    "start": "node ./dist/index.bundle.js"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.17.2",
     "compression": "^1.7.0",
@@ -42,7 +39,5 @@
     "rimraf": "^2.6.1",
     "webpack": "^3.1.0",
     "webpack-node-externals": "^1.6.0"
-  },
-  "author": "",
-  "description": ""
+  }
 }
