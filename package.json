@@ -10,7 +10,7 @@
     "clean": "rimraf dist",
     "dev:build": "yarn run clean && webpack -w",
     "dev": "NODE_ENV=production nodemon dist/index.bundle.js",
-    "start": "node index.js"
+    "start": "node ./src/index.js"
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
