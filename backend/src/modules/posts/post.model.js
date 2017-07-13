@@ -37,6 +37,9 @@ const PostSchema = new Schema({
     type:Schema.Types.ObjectId,
     ref: 'User',
   },
+  rating: {
+    type: Number
+  },
 }, {timestamps: true});
 
 PostSchema.plugin(uniqueValidator, {
@@ -60,6 +63,7 @@ PostSchema.methods = {
       date: this.date,
       location: this.location,
       description: this.description,
+      rating: this.rating,
       slug: this.slug,
       createdAt: this.createdAt,
     };

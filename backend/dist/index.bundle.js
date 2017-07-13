@@ -680,6 +680,8 @@ routes.get('/', postController.getPostsList);
 
 routes.patch('/:id', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.updatePost), postController.updatePost);
 
+routes.delete('/:id', _auth.authJwt, postController.deletePost);
+
 exports.default = routes;
 
 /***/ }),
@@ -696,6 +698,7 @@ exports.createPost = createPost;
 exports.getPostById = getPostById;
 exports.getPostsList = getPostsList;
 exports.updatePost = updatePost;
+exports.deletePost = deletePost;
 
 var _post = __webpack_require__(27);
 
@@ -738,6 +741,19 @@ async function updatePost(req, res) {
       post[key] = req.body[key];
     });
     return res.status(200).json((await post.save()));
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+async function deletePost(req, res) {
+  try {
+    const post = await _post2.default.findById(req.params.id);
+    if (!post.user.equals(req.user._id)) {
+      return res.sendStatus(403);
+    }
+    await post.remove();
+    return res.sendStatus(200);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -802,6 +818,9 @@ const PostSchema = new _mongoose.Schema({
   user: {
     type: _mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  },
+  rating: {
+    type: Number
   }
 }, { timestamps: true });
 
@@ -826,6 +845,7 @@ PostSchema.methods = {
       date: this.date,
       location: this.location,
       description: this.description,
+      rating: this.rating,
       slug: this.slug,
       createdAt: this.createdAt
     };
@@ -873,7 +893,8 @@ exports.default = {
       date: _joi2.default.date().required(),
       location: _joi2.default.string(),
       description: _joi2.default.string().required(),
-      extra: _joi2.default.string()
+      extra: _joi2.default.string(),
+      rating: _joi2.default.number()
     }
   },
   updatePost: {
@@ -882,7 +903,8 @@ exports.default = {
       date: _joi2.default.date(),
       location: _joi2.default.string(),
       description: _joi2.default.string(),
-      extra: _joi2.default.string()
+      extra: _joi2.default.string(),
+      rating: _joi2.default.number()
     }
   }
 };

@@ -39,3 +39,16 @@ export async function updatePost(req, res){
     return res.status(500).json(error);
   }
 };
+
+export async function deletePost(req, res){
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post.user.equals(req.user._id)){
+      return res.sendStatus(403);
+    }
+    await post.remove();
+    return res.sendStatus(200);
+  } catch(error){
+    return res.status(500).json(error);
+  }
+};
