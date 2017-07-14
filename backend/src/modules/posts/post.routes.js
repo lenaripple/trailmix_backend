@@ -10,7 +10,7 @@ routes.post('/', authJwt, validate(postValidation.createPost), postController.cr
 
 routes.get('/:id', postController.getPostById)
 
-routes.get('/posts', postController.getPostsList);
+routes.get('/', postController.getPostsList);
 
 routes.patch('/:id', authJwt, validate(postValidation.updatePost), postController.updatePost);
 

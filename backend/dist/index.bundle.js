@@ -840,7 +840,7 @@ routes.post('/', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.
 
 routes.get('/:id', postController.getPostById);
 
-routes.get('/posts', postController.getPostsList);
+routes.get('/', postController.getPostsList);
 
 routes.patch('/:id', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.updatePost), postController.updatePost);
 
