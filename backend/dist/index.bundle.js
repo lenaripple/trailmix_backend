@@ -913,6 +913,7 @@ async function getPostsList(req, res) {
     return res.status(201).json(posts);
   } catch (error) {
     return res.status(500).json(error);
+    console.log('what happened');
   }
 };
 
