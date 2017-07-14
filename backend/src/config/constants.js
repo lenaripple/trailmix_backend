@@ -1,12 +1,13 @@
 const devConfig = {
   MONGO_URL: 'mongodb://localhost/trailmix_final-dev',
-  JWT_SECRET: 'thsisasecret'
+  JWT_SECRET: 'secret'
 };
 const testConfig = {
   MONGO_URL: 'mongodb://localhost/trailmix_final-test'
 };
 const prodConfig = {
-  MONGO_URL: 'mongodb://heroku_s5l7r9nz:6r61pv6u8smkv8s2q4dvdn77nk@ds157282.mlab.com:57282/heroku_s5l7r9nz'
+  MONGO_URL: 'mongodb://heroku_g6cmp0qw:ee953ghad3t5pp149m7etmilef@ds157702.mlab.com:57702/heroku_g6cmp0qw',
+  JWT_SECRET: 'secret'
 };
 const defaultConfig = {
   PORT: process.env.PORT || 3000,

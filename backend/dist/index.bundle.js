@@ -74,17 +74,18 @@ module.exports =
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-const devConfig = {
+var devConfig = {
   MONGO_URL: 'mongodb://localhost/trailmix_final-dev',
-  JWT_SECRET: 'thsisasecret'
+  JWT_SECRET: 'secret'
 };
-const testConfig = {
+var testConfig = {
   MONGO_URL: 'mongodb://localhost/trailmix_final-test'
 };
-const prodConfig = {
-  MONGO_URL: 'mongodb://heroku_s5l7r9nz:6r61pv6u8smkv8s2q4dvdn77nk@ds157282.mlab.com:57282/heroku_s5l7r9nz'
+var prodConfig = {
+  MONGO_URL: 'mongodb://heroku_g6cmp0qw:ee953ghad3t5pp149m7etmilef@ds157702.mlab.com:57702/heroku_g6cmp0qw',
+  JWT_SECRET: 'secret'
 };
-const defaultConfig = {
+var defaultConfig = {
   PORT: process.env.PORT || 3000
 };
 
@@ -128,9 +129,9 @@ var _mongoose = __webpack_require__(2);
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _validator = __webpack_require__(22);
+var _validator2 = __webpack_require__(22);
 
-var _validator2 = _interopRequireDefault(_validator);
+var _validator3 = _interopRequireDefault(_validator2);
 
 var _bcryptNodejs = __webpack_require__(23);
 
@@ -154,16 +155,17 @@ var _post2 = _interopRequireDefault(_post);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const UserSchema = new _mongoose.Schema({
+var UserSchema = new _mongoose.Schema({
   email: {
     type: String,
     unique: true,
     required: [true, 'Please enter a valid email!'],
     trim: true,
     validate: {
-      validator(email) {
-        return _validator2.default.isEmail(email);
+      validator: function validator(email) {
+        return _validator3.default.isEmail(email);
       },
+
       message: '{VALUE} is not a valid email'
     }
   },
@@ -188,9 +190,10 @@ const UserSchema = new _mongoose.Schema({
     trim: true,
     minlength: [6, 'Password must be at least six characters'],
     validate: {
-      validator(password) {
+      validator: function validator(password) {
         return _user.passwordReg.test(password);
       },
+
       message: '{VALUE} is not a valid password'
     }
   },
@@ -210,37 +213,38 @@ UserSchema.pre('save', function (next) {
 });
 
 UserSchema.plugin(_mongooseUniqueValidator2.default, {
-  message: `{VALUE} already taken.`
+  message: '{VALUE} already taken.'
 });
 
 UserSchema.methods = {
-  _hashPassword(password) {
+  _hashPassword: function _hashPassword(password) {
     return (0, _bcryptNodejs.hashSync)(password);
   },
-  authenticateUser(password) {
+  authenticateUser: function authenticateUser(password) {
     return (0, _bcryptNodejs.compareSync)(password, this.password);
   },
-  createToken() {
+  createToken: function createToken() {
     return _jsonwebtoken2.default.sign({
       _id: this._id
     }, _constants2.default.JWT_SECRET);
   },
-  toAuthJSON() {
+  toAuthJSON: function toAuthJSON() {
     return {
       _id: this._id,
       username: this.username,
-      token: `JWT ${this.createToken()}`
+      token: 'JWT ' + this.createToken()
     };
   },
-  toJSON() {
+  toJSON: function toJSON() {
     return {
       _id: this._id,
       username: this.username
     };
   },
 
+
   _savedTrips: {
-    async posts(postId) {
+    posts: async function posts(postId) {
       if (this.savedTrips.posts.indexOf(postId) >= 0) {
         this.savedTrips.posts.remove(postId);
         await _post2.default.decMembersCount(postId);
@@ -250,7 +254,7 @@ UserSchema.methods = {
       }
       return this.save();
     },
-    isSaved(postId) {
+    isSaved: function isSaved(postId) {
       if (this.savedTrips.posts.indexOf(postId) >= 0) {
         return true;
       }
@@ -306,12 +310,12 @@ var _constants2 = _interopRequireDefault(_constants);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //local strategy
-const localOpts = {
+var localOpts = {
   usernameField: 'email'
 };
-const localStrategy = new _passportLocal2.default(localOpts, async (email, password, done) => {
+var localStrategy = new _passportLocal2.default(localOpts, async function (email, password, done) {
   try {
-    const user = await _user2.default.findOne({ email });
+    var user = await _user2.default.findOne({ email: email });
 
     if (!user) {
       return done(null, false);
@@ -326,13 +330,13 @@ const localStrategy = new _passportLocal2.default(localOpts, async (email, passw
 });
 
 //JWT strategy
-const jwtOpts = {
+var jwtOpts = {
   jwtFromRequest: _passportJwt.ExtractJwt.fromAuthHeader('authorization'),
   secretOrKey: _constants2.default.JWT_SECRET
 };
-const jwtStrategy = new _passportJwt.Strategy(jwtOpts, async (payload, done) => {
+var jwtStrategy = new _passportJwt.Strategy(jwtOpts, async function (payload, done) {
   try {
-    const user = await _user2.default.findById(payload._id);
+    var user = await _user2.default.findById(payload._id);
     if (!user) {
       return done(null, false);
     }
@@ -345,8 +349,8 @@ const jwtStrategy = new _passportJwt.Strategy(jwtOpts, async (payload, done) => 
 _passport2.default.use(localStrategy);
 _passport2.default.use(jwtStrategy);
 
-const authLocal = exports.authLocal = _passport2.default.authenticate('local', { session: false });
-const authJwt = exports.authJwt = _passport2.default.authenticate('jwt', { session: false });
+var authLocal = exports.authLocal = _passport2.default.authenticate('local', { session: false });
+var authJwt = exports.authJwt = _passport2.default.authenticate('jwt', { session: false });
 
 /***/ }),
 /* 7 */
@@ -366,7 +370,7 @@ var _joi2 = _interopRequireDefault(_joi);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const passwordReg = exports.passwordReg = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+var passwordReg = exports.passwordReg = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
 
 exports.default = {
   signup: {
@@ -417,7 +421,7 @@ var _mongooseUniqueValidator2 = _interopRequireDefault(_mongooseUniqueValidator)
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const PostSchema = new _mongoose.Schema({
+var PostSchema = new _mongoose.Schema({
   title: {
     type: String,
     trim: true,
@@ -462,7 +466,7 @@ const PostSchema = new _mongoose.Schema({
 }, { timestamps: true });
 
 PostSchema.plugin(_mongooseUniqueValidator2.default, {
-  message: `{VALUE} already taken.`
+  message: '{VALUE} already taken.'
 });
 
 PostSchema.pre('validate', function (next) {
@@ -471,10 +475,10 @@ PostSchema.pre('validate', function (next) {
 });
 
 PostSchema.methods = {
-  _slugify() {
+  _slugify: function _slugify() {
     this.slug = (0, _slug2.default)(this.title);
   },
-  toJSON() {
+  toJSON: function toJSON() {
     return {
       _id: this._id,
       _title: this.title,
@@ -490,16 +494,20 @@ PostSchema.methods = {
 };
 
 PostSchema.statics = {
-  createPost(args, user) {
-    return this.create(Object.assign({}, args, { user }));
+  createPost: function createPost(args, user) {
+    return this.create(Object.assign({}, args, { user: user }));
   },
-  list({ skip = 0 } = {}) {
+  list: function list() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$skip = _ref.skip,
+        skip = _ref$skip === undefined ? 0 : _ref$skip;
+
     return this.find().sort({ createdAt: -1 }).skip(skip).populate('user');
   },
-  incMembersCount(postId) {
+  incMembersCount: function incMembersCount(postId) {
     return this.findByIdAndUpdate(postId, { $inc: { membersCount: 1 } });
   },
-  decMembersCount(postId) {
+  decMembersCount: function decMembersCount(postId) {
     return this.findByIdAndUpdate(postId, { $inc: { membersCount: -1 } });
   }
 };
@@ -533,21 +541,26 @@ var _modules2 = _interopRequireDefault(_modules);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const app = (0, _express2.default)();
+var app = (0, _express2.default)();
 
 (0, _middleware2.default)(app);
 
-app.get('/', (req, res) => {
+app.get('/', function (req, res) {
   res.send('Hello world');
 });
 
 (0, _modules2.default)(app);
+//
+// const server = app.listen(3000, ()=>{
+//   const {address, port} = server.address()
+//   console.log(`listening on ${address}: ${port}`);
+// })
 
-app.listen(_constants2.default.PORT, err => {
+app.listen(_constants2.default.PORT, function (err) {
   if (err) {
     throw err;
   } else {
-    console.log(`server running on ${_constants2.default.PORT}, server running on ${process.env.NODE_ENV}`);
+    console.log('server running on ' + _constants2.default.PORT + ', server running on ' + process.env.NODE_ENV);
   }
 });
 
@@ -577,7 +590,9 @@ try {
 } catch (err) {
   _mongoose2.default.createConnection(_constants2.default.MONGO_URL);
 }
-_mongoose2.default.connection.once('open', () => console.log('mongodb is running')).on('error', err => {
+_mongoose2.default.connection.once('open', function () {
+  return console.log('mongodb is running');
+}).on('error', function (err) {
   throw err;
 });
 
@@ -614,10 +629,10 @@ var _passport2 = _interopRequireDefault(_passport);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const isDev = process.env.NODE_ENV === 'development';
-const isProd = process.env.NODE_ENV === 'production';
+var isDev = process.env.NODE_ENV === 'development';
+var isProd = process.env.NODE_ENV === 'production';
 
-exports.default = app => {
+exports.default = function (app) {
   if (isProd) {
     app.use((0, _compression2.default)());
     app.use((0, _helmet2.default)());
@@ -675,7 +690,7 @@ var _post2 = _interopRequireDefault(_post);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = app => {
+exports.default = function (app) {
   app.use('/api/v1/users', _user2.default);
   app.use('/api/v1/posts', _post2.default);
 };
@@ -711,7 +726,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const routes = new _express.Router();
+var routes = new _express.Router();
 
 routes.post('/signup', (0, _expressValidation2.default)(_user3.default.signup), userController.signUp);
 routes.post('/login', _auth.authLocal, userController.login);
@@ -775,7 +790,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 async function signUp(req, res) {
   try {
-    const user = await _user2.default.create(req.body);
+    var user = await _user2.default.create(req.body);
     return res.status(201).json(user.toAuthJSON());
   } catch (error) {
     return res.status(500).json(error);
@@ -819,7 +834,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-const routes = new _express.Router();
+var routes = new _express.Router();
 
 routes.post('/', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.createPost), postController.createPost);
 
@@ -864,7 +879,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 async function createPost(req, res) {
   try {
-    const post = await _post2.default.createPost(req.body, req.user._id);
+    var post = await _post2.default.createPost(req.body, req.user._id);
     return res.status(201).json(post);
   } catch (error) {
     return res.status(400).json(error);
@@ -872,11 +887,11 @@ async function createPost(req, res) {
 };
 async function getPostById(req, res) {
   try {
-    const promise = await Promise.all([_user2.default.findById(req.user._id), _post2.default.findById(req.params.id).populate('user')]);
-    const saved = promise[0]._savedTrips.isSaved(req.params.id);
-    const post = promise[1];
+    var promise = await Promise.all([_user2.default.findById(req.user._id), _post2.default.findById(req.params.id).populate('user')]);
+    var saved = promise[0]._savedTrips.isSaved(req.params.id);
+    var post = promise[1];
     return res.status(201).json(Object.assign({}, post.toJSON(), {
-      saved
+      saved: saved
     }));
   } catch (error) {
     return res.status(500).json(error);
@@ -885,11 +900,11 @@ async function getPostById(req, res) {
 
 async function getPostsList(req, res) {
   try {
-    const promise = await Promise.all([_user2.default.findById(req.user._id), _post2.default.list()]);
-    const posts = promise[1].reduce((arr, post) => {
-      const saved = promise[0]._savedTrips.isSaved(post._id);
+    var promise = await Promise.all([_user2.default.findById(req.user._id), _post2.default.list()]);
+    var posts = promise[1].reduce(function (arr, post) {
+      var saved = promise[0]._savedTrips.isSaved(post._id);
       arr.push(Object.assign({}, post.toJSON(), {
-        saved
+        saved: saved
       }));
       return arr;
     }, []);
@@ -901,11 +916,11 @@ async function getPostsList(req, res) {
 
 async function updatePost(req, res) {
   try {
-    const post = await _post2.default.findById(req.params.id);
+    var post = await _post2.default.findById(req.params.id);
     if (!post.user.equals(req.user._id)) {
       return res.sendStatus(403);
     }
-    Object.keys(req.body).forEach(key => {
+    Object.keys(req.body).forEach(function (key) {
       post[key] = req.body[key];
     });
     return res.status(200).json((await post.save()));
@@ -916,7 +931,7 @@ async function updatePost(req, res) {
 
 async function deletePost(req, res) {
   try {
-    const post = await _post2.default.findById(req.params.id);
+    var post = await _post2.default.findById(req.params.id);
     if (!post.user.equals(req.user._id)) {
       return res.sendStatus(403);
     }
@@ -929,7 +944,7 @@ async function deletePost(req, res) {
 
 async function saveTrip(req, res) {
   try {
-    const user = await _user2.default.findById(req.user._id);
+    var user = await _user2.default.findById(req.user._id);
     await user._savedTrips.posts(req.params.id);
     return res.sendStatus(200);
   } catch (error) {

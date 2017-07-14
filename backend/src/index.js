@@ -13,6 +13,11 @@ app.get('/', (req, res) => {
 });
 
 apiRoutes(app);
+//
+// const server = app.listen(3000, ()=>{
+//   const {address, port} = server.address()
+//   console.log(`listening on ${address}: ${port}`);
+// })
 
 app.listen(constants.PORT, err => {
   if (err) {
