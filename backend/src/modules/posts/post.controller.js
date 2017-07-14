@@ -29,7 +29,7 @@ export async function getPostById(req, res){
 export async function getPostsList(req, res){
   try {
     const promise = await Promise.all([
-      // User.findById(req.user._id),
+      User.findById(req.user._id),
       Post.list()
     ]);
     const posts = promise[1].reduce((arr, post) => {
@@ -43,7 +43,6 @@ export async function getPostsList(req, res){
     return res.status(201).json(posts);
   } catch (error){
     return res.status(500).json(error);
-    console.log('what happened');
   }
 };
 

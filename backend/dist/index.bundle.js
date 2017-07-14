@@ -900,9 +900,7 @@ async function getPostById(req, res) {
 
 async function getPostsList(req, res) {
   try {
-    var promise = await Promise.all([
-    // User.findById(req.user._id),
-    _post2.default.list()]);
+    var promise = await Promise.all([_user2.default.findById(req.user._id), _post2.default.list()]);
     var posts = promise[1].reduce(function (arr, post) {
       var saved = promise[0]._savedTrips.isSaved(post._id);
       arr.push(Object.assign({}, post.toJSON(), {
@@ -913,7 +911,6 @@ async function getPostsList(req, res) {
     return res.status(201).json(posts);
   } catch (error) {
     return res.status(500).json(error);
-    console.log('what happened');
   }
 };
 

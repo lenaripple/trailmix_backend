@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev:build": "yarn run clean && webpack -w",
-    "dev": "NODE_ENV=production nodemon dist/index.bundle.js",
+    "dev": "NODE_ENV=development nodemon dist/index.bundle.js",
     "start": "node dist/index.bundle.js"
   },
   "dependencies": {
