@@ -838,9 +838,9 @@ var routes = new _express.Router();
 
 routes.post('/', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.createPost), postController.createPost);
 
-routes.get('/:id', _auth.authJwt, postController.getPostById);
+routes.get('/:id', postController.getPostById);
 
-routes.get('/', _auth.authJwt, postController.getPostsList);
+routes.get('/', postController.getPostsList);
 
 routes.patch('/:id', _auth.authJwt, (0, _expressValidation2.default)(_post3.default.updatePost), postController.updatePost);
 
